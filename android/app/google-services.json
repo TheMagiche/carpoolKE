@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "602888960600",
+    "firebase_url": "https://carpoolke-kids.firebaseio.com",
+    "project_id": "carpoolke-kids",
+    "storage_bucket": "carpoolke-kids.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602888960600:android:d672b5ffb6b4fa4018a82d",
+        "android_client_info": {
+          "package_name": "com.themagiche.carpoolke"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "602888960600-1q51ccoa613f8mlmk9dsler6frb0kies.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-iwqEB7OJnY1Nmg6HrK2CFYwj4YKuYOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "602888960600-1q51ccoa613f8mlmk9dsler6frb0kies.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
