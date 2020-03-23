@@ -1,3 +1,4 @@
+import 'package:carpoolke/services/Data/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:carpoolke/models/user.dart';
 
@@ -42,7 +43,15 @@ class Authservice {
         password: password,
       );
       FirebaseUser user = result.user;
-
+      await UserDataBaseServices(uid: user.uid).updateUserData(
+        "First Name",
+        "Last Name",
+        "Middle Name",
+        "National ID",
+        "Phone Number",
+        email,
+        '',
+      );
       return _userFromFirebaseUser(user);
     } catch (e) {
       return null;

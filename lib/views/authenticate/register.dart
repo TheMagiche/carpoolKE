@@ -40,7 +40,7 @@ class _RegisterState extends State<Register> {
             await _auth.registerWithEmailAndPassword(email, password);
         if (result == null) {
           setState(() {
-            error = 'Please supply a valid email';
+            error = 'Please supply valid credentials';
           });
           setState(() {
             isloading = false;
