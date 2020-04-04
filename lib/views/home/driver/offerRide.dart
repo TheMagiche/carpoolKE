@@ -1,5 +1,6 @@
 import 'package:carpoolke/views/home/driver/driver.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OfferRide extends StatefulWidget {
   @override
@@ -7,12 +8,23 @@ class OfferRide extends StatefulWidget {
 }
 
 class _OfferRideState extends State<OfferRide> {
-  bool carRegistered = true;
+  bool carRegistered = false;
 
   @override
   void initState() {
     super.initState();
     //checks for what screen to be displayed
+    screenCheck();
+  }
+
+  screenCheck() {
+    SharedPreferences.getInstance().then((pref) {
+      setState(() {
+        carRegistered = pref.getBool('hasCar');
+      });
+    }).catchError((e) {
+      print(e);
+    });
   }
 
   //callback executed when someone register a car -- decides again which widget to load
@@ -56,9 +68,7 @@ class _NotRegisteredState extends State<NotRegistered> {
       actions: <Widget>[
         FlatButton(
           child: Text("Yes, I would like to"),
-          onPressed: () {
-            changeSharedPreference();
-          },
+          onPressed: () {},
         ),
         FlatButton(
           child: Text("Cancel"),

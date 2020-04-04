@@ -4,23 +4,23 @@ double formIconSize = 17.0;
 
 var formTextInputDecoration = InputDecoration(
   // cont1entPadding: EdgeInsets.symmetric(vertical:1 ,horizontal: ),
-  isDense: false,
-  fillColor: Colors.white,
-  filled: true,
+  // isDense: false,
+  // fillColor: Colors.white,
+  // filled: true,
   labelStyle: TextStyle(
-    color: Colors.black,
-    fontFamily: 'Oxygen',
+    color: Colors.red,
+    fontFamily: 'bradhitc',
     fontSize: 13.0,
   ),
   errorStyle: TextStyle(
-    color: Colors.white,
+    color: Colors.brown,
   ),
-  focusedBorder:
-      new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
-  enabledBorder:
-      new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
-  errorBorder:
-      new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
-  focusedErrorBorder:
-      new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
+  // focusedBorder:
+  //     new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
+  // enabledBorder:
+  //     new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
+  // errorBorder:
+  //     new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
+  // focusedErrorBorder:
+  //     new OutlineInputBorder(borderSide: new BorderSide(color: Colors.white)),
 );

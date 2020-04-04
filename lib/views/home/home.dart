@@ -57,18 +57,18 @@ class _HomeState extends State<Home> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          'CarpoolKe',
-          style: TextStyle(
-            fontFamily: 'bradhitc',
-            fontSize: 25.0,
-            color: Colors.red,
-          ),
-        ),
-        actions: <Widget>[],
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.white,
+      //   title: Text(
+      //     'CarpoolKe',
+      //     style: TextStyle(
+      //       fontFamily: 'bradhitc',
+      //       fontSize: 25.0,
+      //       color: Colors.red,
+      //     ),
+      //   ),
+      //   actions: <Widget>[],
+      // ),
       body: currentPage,
       bottomNavigationBar: CurvedNavigationBar(
         index: currentTab,
@@ -78,9 +78,9 @@ class _HomeState extends State<Home> {
             currentPage = pages[index];
           });
         },
-        color: Colors.white,
-        buttonBackgroundColor: Colors.white,
-        backgroundColor: Colors.red,
+        color: Colors.red,
+        buttonBackgroundColor: Colors.brown,
+        backgroundColor: Colors.white,
         height: 50.0,
         items: <Widget>[
           MyBottomNavItems(

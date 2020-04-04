@@ -1,5 +1,8 @@
+import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/views/home/rides/confirrmCard.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class FindRide extends StatefulWidget {
   @override
@@ -12,7 +15,7 @@ class _FindRideState extends State<FindRide> {
   String requestID = "";
   String departure = "";
   String destination = "";
-
+  var uuid = Uuid();
   TimeOfDay pickedTime = TimeOfDay.now();
 
   Future<Null> _selectTime(BuildContext context) async {
@@ -30,6 +33,7 @@ class _FindRideState extends State<FindRide> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     return Center(
       child: SingleChildScrollView(
         child: Card(
@@ -44,18 +48,26 @@ class _FindRideState extends State<FindRide> {
               children: <Widget>[
                 // Starting Location
                 Container(
+                  padding: EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.black12),
                       borderRadius: BorderRadius.circular(8.0)),
                   child: ListTile(
                     leading: Icon(Icons.location_on),
-                    title: Text(
-                      "Model Engineering College",
-                      style: TextStyle(
-                        fontSize: 15.0,
+                    title: TextField(
+                      style: TextStyle(fontSize: 18.0),
+                      decoration: InputDecoration(
+                        hintText: "Departure",
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black12),
+                        ),
                       ),
+                      onChanged: (String val) {
+                        setState(() {
+                          departure = val;
+                        });
+                      },
                     ),
-                    subtitle: Text("Thrikkakara"),
                   ),
                 ),
                 // Destination
@@ -98,8 +110,13 @@ class _FindRideState extends State<FindRide> {
                     onPressed: () {
                       showModalBottomSheet(
                           context: context,
-                          builder: (context) => ConfirmCard(uid, departure,
-                              destination, requestID, pickedTime)).then(
+                          builder: (context) => ConfirmCard(
+                                uid: user.uid,
+                                departure: departure,
+                                destination: destination,
+                                requestID: uuid.v1(),
+                                time: pickedTime,
+                              )).then(
                           (snack) => Scaffold.of(context).showSnackBar(snack));
                     },
                     elevation: 6.0,

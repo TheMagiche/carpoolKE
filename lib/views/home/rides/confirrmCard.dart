@@ -12,7 +12,7 @@ class ConfirmCard extends StatefulWidget {
   final TimeOfDay time;
 
   ConfirmCard(
-      this.uid, this.departure, this.destination, this.requestID, this.time);
+      {this.uid, this.departure, this.destination, this.requestID, this.time});
 
   @override
   _ConfirmCardState createState() => _ConfirmCardState();
@@ -26,7 +26,7 @@ class _ConfirmCardState extends State<ConfirmCard> {
         widget.departure,
         widget.destination,
         widget.time.toString());
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 1), () {
       Navigator.of(context).pop();
       Navigator.of(context).pop("success");
     });
@@ -81,8 +81,8 @@ class _ConfirmCardState extends State<ConfirmCard> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Oops! Please try again"),
-            content:
-                Text("Please select a destination before confirming ride."),
+            content: Text(
+                "Please fill all necessary details before confirming ride."),
             actions: <Widget>[
               FlatButton(
                 child: Text("Ok"),
@@ -113,18 +113,19 @@ class _ConfirmCardState extends State<ConfirmCard> {
               Icons.location_on,
               color: Colors.white,
             ),
-            title: Text(
-              "Model Engineering College",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            subtitle: Text(
-              "Thrikkakara",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
+            title: widget.departure == ""
+                ? Text(
+                    "Departure not selected",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(
+                    widget.departure,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

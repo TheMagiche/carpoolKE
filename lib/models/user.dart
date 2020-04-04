@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
   final String uid;
 
@@ -49,33 +51,15 @@ class UserData {
     this.userImage = mapData['userImage'];
   }
 
-  // set _uid(String uid){
-  //   this.uid = uid;
-  // }
-
-  // set _fname(String fname){
-  //   this.fname = fname;
-  // }
-
-  // set _lname(String lname){
-  //   this.lname = lname;
-  // }
-
-  // set _mname(String mname){
-  //   this.mname = mname;
-  // }
-
-  // set _natID(String natID){
-  //   this.natID = natID;
-  // }
-
-  // String get _uid => uid;
-  // String get _fname => fname;
-  // String get _lname => lname;
-  // String get _mname => mname;
-  // String get _natID => natID;
-  // String get _phoneNum => phoneNum;
-  // String get _userEmail => userEmail;
-  // String get _userImage => userImage;
-
+  factory UserData.fromDocument(DocumentSnapshot snapshot) {
+    return UserData(
+      fname: snapshot.data['fname'],
+      lname: snapshot.data['lname'],
+      mname: snapshot.data['mname'],
+      natID: snapshot.data['natID'],
+      phoneNum: snapshot.data['phoneNum'],
+      userEmail: snapshot.data['userEmail'],
+      userImage: snapshot.data['userImage'],
+    );
+  }
 }

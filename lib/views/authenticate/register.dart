@@ -3,8 +3,8 @@ import 'package:carpoolke/views/shared/constants.dart';
 import 'package:carpoolke/views/shared/main_btn.dart';
 import 'package:carpoolke/views/widgets/appbar.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
-import 'package:carpoolke/views/widgets/socialbuttons.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
@@ -23,21 +23,32 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
   bool isloading = false;
+  String fname = '';
+  String lname = '';
   String email = '';
   String error = '';
+  String nationalID = '';
+  String phoneNumber = '';
   String password = '';
+  bool hasCar;
   Function _registerWithEmailAndPassword;
 
   @override
   void initState() {
     super.initState();
     _registerWithEmailAndPassword = () async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (hasCar == true)
+        prefs.setBool('hasCar', true);
+      else
+        prefs.setBool('hasCar', false);
+
       if (_formKey.currentState.validate()) {
         setState(() {
           isloading = true;
         });
-        dynamic result =
-            await _auth.registerWithEmailAndPassword(email, password);
+        dynamic result = await _auth.registerWithEmailAndPassword(
+            email, password, fname, lname, nationalID, phoneNumber);
         if (result == null) {
           setState(() {
             error = 'Please supply valid credentials';
@@ -54,168 +65,324 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return isloading
         ? Loading()
-        : Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Expanded(
-                        flex: 4,
-                        child: Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(0, 0, 0, 1.0),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                colorFilter: new ColorFilter.mode(
-                                    Colors.black.withOpacity(0.5),
-                                    BlendMode.dstATop),
-                                image: AssetImage('assets/main-bg.png'),
-                              )),
-                        )),
-                    Expanded(
-                      flex: 5,
-                      child: Card(
-                        margin: EdgeInsets.all(0.0),
-                        elevation: 3.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0.0),
-                        ),
-                        color: Colors.red,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 20.0, horizontal: 50.0),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Container(),
-                                ),
-                                TextFormField(
-                                  decoration: formTextInputDecoration.copyWith(
-                                    labelText: 'email',
-                                    icon: Icon(
-                                      Icons.email,
-                                      color: Colors.white,
-                                      size: formIconSize,
-                                    ),
-                                  ),
-                                  validator: (val) =>
-                                      val.isEmpty ? 'Enter an email' : null,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      email = val;
-                                    });
-                                  },
-                                ),
-                                Expanded(
-                                  child: Container(),
-                                ),
-                                TextFormField(
-                                  decoration: formTextInputDecoration.copyWith(
-                                    labelText: 'password',
-                                    icon: Icon(
-                                      Icons.lock,
-                                      color: Colors.white,
-                                      size: formIconSize,
-                                    ),
-                                  ),
-                                  validator: (val) => val.length < 6
-                                      ? 'Enter a password six characters long'
-                                      : null,
-                                  obscureText: true,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      password = val;
-                                    });
-                                  },
-                                ),
-                                Expanded(
-                                  child: Container(),
-                                ),
-                                Text(error,
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 14.0)),
-                                Expanded(
-                                  child: Container(),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+        : Container(
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              resizeToAvoidBottomInset: true,
+              body: LayoutBuilder(
+                builder:
+                    (BuildContext context, BoxConstraints viewportConstraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: viewportConstraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
                                   children: <Widget>[
-                                    FlatButton(
-                                      child: Text(
-                                        'Already a member?',
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Oxygen',
-                                          fontSize: 13.0,
+                                    Container(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      height: 250,
+                                      decoration: BoxDecoration(
+                                        backgroundBlendMode:
+                                            BlendMode.colorDodge,
+                                        color: Colors.white,
+                                        image: DecorationImage(
+                                          image:
+                                              AssetImage("assets/children.png"),
+                                          fit: BoxFit.contain,
                                         ),
                                       ),
-                                      onPressed: widget.toggleView,
+                                    ),
+                                    Container(
+                                        child: Center(
+                                      child: Text(
+                                        'LET\'S START A REVOLUTION',
+                                        style: TextStyle(
+                                          color: Colors.brown,
+                                          fontFamily: 'bradhitc',
+                                          fontSize: 20.0,
+                                        ),
+                                      ),
+                                    )),
+                                    Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: TextFormField(
+                                                  decoration:
+                                                      formTextInputDecoration
+                                                          .copyWith(
+                                                    labelText: 'First Name',
+                                                    suffixIcon: Icon(
+                                                      Icons.accessibility,
+                                                      color: Colors.brown,
+                                                      size: formIconSize,
+                                                    ),
+                                                  ),
+                                                  validator: (val) =>
+                                                      val.isEmpty
+                                                          ? 'Enter first name'
+                                                          : null,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      fname = val;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 10.0,
+                                              ),
+                                              Expanded(
+                                                child: TextFormField(
+                                                  decoration:
+                                                      formTextInputDecoration
+                                                          .copyWith(
+                                                    labelText: 'Last Name',
+                                                    suffixIcon: Icon(
+                                                      Icons.accessibility,
+                                                      color: Colors.brown,
+                                                      size: formIconSize,
+                                                    ),
+                                                  ),
+                                                  validator: (val) =>
+                                                      val.isEmpty
+                                                          ? 'Enter last name'
+                                                          : null,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      lname = val;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          TextFormField(
+                                            decoration: formTextInputDecoration
+                                                .copyWith(
+                                              labelText: 'Email',
+                                              suffixIcon: Icon(
+                                                Icons.email,
+                                                color: Colors.brown,
+                                                size: formIconSize,
+                                              ),
+                                            ),
+                                            validator: (val) => val.isEmpty
+                                                ? 'Enter an email'
+                                                : null,
+                                            onChanged: (val) {
+                                              setState(() {
+                                                email = val;
+                                              });
+                                            },
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: TextFormField(
+                                                  decoration:
+                                                      formTextInputDecoration
+                                                          .copyWith(
+                                                    labelText: 'National ID',
+                                                    suffixIcon: Icon(
+                                                      Icons.account_box,
+                                                      color: Colors.brown,
+                                                      size: formIconSize,
+                                                    ),
+                                                  ),
+                                                  validator: (val) => val
+                                                          .isEmpty
+                                                      ? 'Enter your national ID number'
+                                                      : null,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      nationalID = val;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 10.0,
+                                              ),
+                                              Expanded(
+                                                child: TextFormField(
+                                                  decoration:
+                                                      formTextInputDecoration
+                                                          .copyWith(
+                                                    labelText: 'Phone Number',
+                                                    suffixIcon: Icon(
+                                                      Icons.phone,
+                                                      color: Colors.brown,
+                                                      size: formIconSize,
+                                                    ),
+                                                  ),
+                                                  validator: (val) =>
+                                                      val.isEmpty
+                                                          ? 'Enter phone number'
+                                                          : null,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      phoneNumber = val;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          TextFormField(
+                                            decoration: formTextInputDecoration
+                                                .copyWith(
+                                              labelText: 'Password',
+                                              suffixIcon: Icon(
+                                                Icons.lock,
+                                                color: Colors.brown,
+                                                size: formIconSize,
+                                              ),
+                                            ),
+                                            validator: (val) => val.length < 6
+                                                ? 'Enter a password six characters long'
+                                                : null,
+                                            obscureText: true,
+                                            onChanged: (val) {
+                                              setState(() {
+                                                password = val;
+                                              });
+                                            },
+                                          ),
+                                          Text(error,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14.0)),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Center(
+                                          child: Text(
+                                            "Do you have a vehicle to pool?",
+                                            style: TextStyle(
+                                              fontSize: 13.0,
+                                              fontFamily: 'bradhitc',
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(padding: EdgeInsets.all(2.0)),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: <Widget>[
+                                        Text("Yes:",
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontFamily: 'bradhitc',
+                                                color: Colors.red)),
+                                        Radio(
+                                          activeColor: Colors.red,
+                                          value: true,
+                                          groupValue: hasCar,
+                                          onChanged: (bool val) {
+                                            setState(() {
+                                              hasCar = val;
+                                            });
+                                          },
+                                        ),
+                                        Text("No:",
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontFamily: 'bradhitc',
+                                                color: Colors.red)),
+                                        Radio(
+                                          activeColor: Colors.red,
+                                          value: false,
+                                          groupValue: hasCar,
+                                          onChanged: (bool val) {
+                                            setState(() {
+                                              hasCar = val;
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    Expanded(
+                                      child: Container(),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 0.0, horizontal: 50.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          FlatButton(
+                                            child: Text(
+                                              'Already a member?',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontFamily: 'bradhitc',
+                                                fontSize: 13.0,
+                                              ),
+                                            ),
+                                            onPressed: widget.toggleView,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Center(
+                                        child: MainButton(
+                                            text: 'Register',
+                                            myFunc:
+                                                _registerWithEmailAndPassword,
+                                            myicon:
+                                                Icon(Icons.arrow_forward_ios)),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 15.0,
                                     ),
                                   ],
                                 ),
-                                Expanded(
-                                  child: Container(),
-                                )
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                SocialButton(
-                                  image: 'assets/logos_facebook.png',
-                                  text: 'FACEBOOK',
-                                ),
-                                SocialButton(
-                                  image: 'assets/logos_google-icon.png',
-                                  text: 'GOOGLE  ',
-                                ),
-                              ],
-                            ),
-                            Expanded(
-                              child: Container(),
-                            ),
-                            Center(
-                              child: MainButton(
-                                  text: 'Register',
-                                  myFunc: _registerWithEmailAndPassword,
-                                  myicon: Icon(Icons.arrow_forward_ios)),
-                            ),
-                            SizedBox(
-                              height: 15.0,
+                            Positioned(
+                              top: 0.0,
+                              left: 0.0,
+                              right: 0.0,
+                              child: CarpoolAppBar(
+                                screenText: 'Register',
+                                bgColor: Colors.transparent,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    )
-                  ],
-                ),
-                Positioned(
-                  top: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: CarpoolAppBar(
-                    screenText: 'Register',
-                  ),
-                ),
-              ],
+                    ),
+                  );
+                },
+              ),
             ),
           );
   }

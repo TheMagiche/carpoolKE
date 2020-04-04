@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/services/Data/database.dart';
+
 import 'package:carpoolke/services/auth.dart';
-import 'package:carpoolke/views/widgets/loading.dart';
-import 'package:flutter/material.dart';
+import 'package:carpoolke/views/home/profile/editProfile.dart';
 import 'package:carpoolke/views/shared/main_btn.dart';
-import 'package:image_picker/image_picker.dart'; // For Image Picker
-import 'package:path/path.dart' as Path;
-import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
-import 'dart:io';
+import 'package:carpoolke/views/widgets/appbar.dart';
+import 'package:carpoolke/views/widgets/loading.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class ProfileComponent extends StatefulWidget {
   final User user;
@@ -18,241 +19,231 @@ class ProfileComponent extends StatefulWidget {
 }
 
 class _ProfileComponentState extends State<ProfileComponent> {
-  final _formKey = GlobalKey<FormState>();
-
-  String _fname;
-  String _lname;
-  String _mname;
-  String _natID;
-  String _phoneNum;
-  String _userImage;
-  File _image;
   bool isLoading = false;
-
-  Future chooseFile() async {
-    await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
-      setState(() {
-        _image = image;
-      });
-    });
-  }
+  UserData userData = UserData();
 
   final Authservice _auth = Authservice();
+  final CollectionReference userCollection =
+      Firestore.instance.collection('Users');
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    void _showSettingsPanel() {
+      Navigator.push(context, MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return EditProfile(
+            user: widget.user,
+          );
+        },
+      ));
+    }
+
     return StreamBuilder<UserData>(
-        stream: UserDataBaseServices(uid: widget.user.uid).userData,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && isLoading != true) {
-            UserData userData = snapshot.data;
-            return Padding(
-              padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    Container(
-                      height: 250.0,
-                      child: Column(
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                                child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                userData.userImage == ''
-                                    ? CircleAvatar(
-                                        radius: 80.0,
-                                        backgroundImage: AssetImage(
-                                            'assets/defaultUser.jpg'))
-                                    : CircleAvatar(
-                                        radius: 80.0,
-                                        backgroundImage:
-                                            NetworkImage(userData.userImage),
-                                      ),
-                              ],
-                            )),
+      stream: UserDataBaseServices(uid: widget.user.uid).userData,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && isLoading != true) {
+          UserData userData = snapshot.data;
+          return SafeArea(
+            child: Container(
+              width: double.infinity,
+              height: double.maxFinite,
+              child: Stack(
+                children: <Widget>[
+                  ClipPath(
+                    child: Opacity(
+                      opacity: 0.7,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/bg.jpg'),
                           ),
-                          _image == null
-                              ? RaisedButton(
-                                  child: Text('Choose File'),
-                                  onPressed: chooseFile,
-                                  color: Colors.red,
-                                )
-                              : Container(
-                                  child: Text('Select Image'),
-                                ),
-                        ],
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10.0,
+                    clipper: GetClipper(),
+                  ),
+                  Positioned(
+                    width: 350.0,
+                    top: MediaQuery.of(context).size.height / 6,
+                    child: Column(
+                      children: <Widget>[
+                        userData.userImage == ''
+                            ? CircleAvatar(
+                                radius: 80.0,
+                                backgroundImage:
+                                    AssetImage('assets/defaultUser.jpg'))
+                            : Container(
+                                width: 150.0,
+                                height: 150.0,
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      blurRadius: 15.0, // soften the shadow
+                                      spreadRadius: 5.0, //extend the shadow
+                                      // offset: Offset(
+                                      //   15.0, // Move to right 10  horizontally
+                                      //   15.0, // Move to bottom 10 Vertically
+                                      // ),
+                                    )
+                                  ],
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(
+                                      userData.userImage,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                        SizedBox(height: 25.0),
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'First Name',
+                                      style: TextStyle(
+                                        fontFamily: 'bradhitc',
+                                      ),
+                                    ),
+                                    Text(userData.fname)
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Middle Name',
+                                      style: TextStyle(
+                                        fontFamily: 'bradhitc',
+                                      ),
+                                    ),
+                                    Text(userData.mname)
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Last Name',
+                                      style: TextStyle(
+                                        fontFamily: 'bradhitc',
+                                      ),
+                                    ),
+                                    Text(userData.lname)
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 25.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'National ID',
+                                      style: TextStyle(
+                                        fontFamily: 'bradhitc',
+                                      ),
+                                    ),
+                                    Text(userData.natID)
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Phone number',
+                                      style: TextStyle(
+                                        fontFamily: 'bradhitc',
+                                      ),
+                                    ),
+                                    Text(userData.phoneNum)
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 15.0),
+                        Center(
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Email',
+                                style: TextStyle(
+                                  fontFamily: 'bradhitc',
+                                ),
+                              ),
+                              Text(userData.userEmail)
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 90.0),
+                        MainButton(
+                          text: 'Log Out',
+                          myicon: Icon(Icons.arrow_forward_ios),
+                          myFunc: () async {
+                            await _auth.signOut();
+                          },
+                        ),
+                        SizedBox(height: 5.0),
+                      ],
                     ),
-                    TextFormField(
-                      initialValue: userData.fname,
-                      decoration: textInputDecoration.copyWith(
-                          labelText: 'First Name',
-                          prefixIcon: Icon(
-                            Icons.add_box,
-                            color: Colors.red,
-                          )),
-                      validator: (val) =>
-                          val.isEmpty ? 'Please enter first name' : null,
-                      onChanged: (val) {
-                        setState(() {
-                          _fname = val;
-                        });
-                      },
+                  ),
+                  Positioned(
+                    top: 0.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: CarpoolAppBar(
+                      screenText: 'Profile',
+                      bgColor: Colors.white,
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    TextFormField(
-                      initialValue: userData.lname,
-                      decoration: textInputDecoration.copyWith(
-                          labelText: 'Last Name',
-                          prefixIcon: Icon(
-                            Icons.add_box,
-                            color: Colors.red,
-                          )),
-                      validator: (val) =>
-                          val.isEmpty ? 'Please enter last name' : null,
-                      onChanged: (val) {
-                        setState(() {
-                          _lname = val;
-                        });
-                      },
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    TextFormField(
-                      initialValue: userData.mname,
-                      decoration: textInputDecoration.copyWith(
-                          labelText: 'Middle Name',
-                          prefixIcon: Icon(
-                            Icons.add_box,
-                            color: Colors.red,
-                          )),
-                      validator: (val) =>
-                          val.isEmpty ? 'Please enter middle name' : null,
-                      onChanged: (val) {
-                        setState(() {
-                          _mname = val;
-                        });
-                      },
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    TextFormField(
-                      initialValue: userData.natID,
-                      decoration: textInputDecoration.copyWith(
-                          labelText: 'National ID',
-                          prefixIcon: Icon(
-                            Icons.add_box,
-                            color: Colors.red,
-                          )),
-                      validator: (val) =>
-                          val.isEmpty ? 'Please enter National ID' : null,
-                      onChanged: (val) {
-                        setState(() {
-                          _natID = val;
-                        });
-                      },
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    TextFormField(
-                      initialValue: userData.phoneNum,
-                      decoration: textInputDecoration.copyWith(
-                          labelText: 'Phone Number',
-                          prefixIcon: Icon(
-                            Icons.add_box,
-                            color: Colors.red,
-                          )),
-                      validator: (val) =>
-                          val.isEmpty ? 'Please enter Phone Number' : null,
-                      onChanged: (val) {
-                        setState(() {
-                          _phoneNum = val;
-                        });
-                      },
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    MainButton(
-                      text: 'Update Profile',
-                      myicon: Icon(Icons.arrow_forward_ios),
-                      myFunc: () async {
-                        if (_formKey.currentState.validate()) {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          StorageReference storageReference = FirebaseStorage
-                              .instance
-                              .ref()
-                              .child('profile/${Path.basename(_image.path)}');
-                          StorageUploadTask uploadTask =
-                              storageReference.putFile(_image);
-                          await uploadTask.onComplete;
-                          print('File Uploaded');
-                          await storageReference
-                              .getDownloadURL()
-                              .then((fileURL) {
-                            setState(() {
-                              _userImage = fileURL;
-                              print(_userImage);
-                              UserDataBaseServices(uid: widget.user.uid)
-                                  .updateUserData(
-                                _fname ?? userData.fname,
-                                _lname ?? userData.lname,
-                                _mname ?? userData.mname,
-                                _natID ?? userData.natID,
-                                _phoneNum ?? userData.phoneNum,
-                                userData.userEmail ?? userData.userEmail,
-                                _userImage ?? userData.userImage,
-                              );
-                            });
-                          });
-
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
-                      },
-                    ),
-                    SizedBox(height: 10.0),
-                    MainButton(
-                      text: 'Logout',
-                      myFunc: () async {
-                        await _auth.signOut();
-                      },
-                      myicon: Icon(Icons.account_circle),
-                    ),
-                    SizedBox(height: 50.0),
-                  ],
-                ),
+                  ),
+                  Positioned(
+                      top: 80.0,
+                      left: 5.0,
+                      child: FlatButton(
+                        onPressed: _showSettingsPanel,
+                        child: Icon(
+                          Icons.settings,
+                          color: Colors.white,
+                          size: 35.0,
+                        ),
+                      )),
+                ],
               ),
-            );
-          } else {
-            return Loading();
-          }
-        });
+            ),
+          );
+        } else {
+          return Loading();
+        }
+      },
+    );
   }
 }
 
-var textInputDecoration = InputDecoration(
-    fillColor: Colors.white,
-    alignLabelWithHint: false,
-    filled: false,
-    enabled: false,
-    isDense: false,
-    contentPadding: EdgeInsets.all(20.0),
-    border: InputBorder.none,
-    labelStyle:
-        TextStyle(fontFamily: 'bradhitc', fontSize: 20.0, color: Colors.red));
+class GetClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = new Path();
+
+    path.lineTo(0.0, size.height / 2.2);
+    path.lineTo(size.width + 250, 0.0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+}

@@ -4,7 +4,7 @@ import 'package:carpoolke/views/shared/main_btn.dart';
 import 'package:carpoolke/views/widgets/appbar.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 
-import 'package:carpoolke/views/widgets/socialbuttons.dart';
+// import 'package:carpoolke/views/widgets/socialbuttons.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
@@ -27,7 +27,6 @@ class _SignInState extends State<SignIn> {
   String error = '';
   String password = '';
   Function _signInWithEmailAndPassword;
-  Function _resetPassword;
 
   @override
   void initState() {
@@ -49,198 +48,168 @@ class _SignInState extends State<SignIn> {
         }
       }
     };
-    _resetPassword = (email) async {
-      print('sending email');
-      _auth.resetPassword(email);
-    };
   }
 
   @override
   Widget build(BuildContext context) {
     return isloading
         ? Loading()
-        : Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 4,
-                      child: Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        decoration: BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 1.0),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              colorFilter: new ColorFilter.mode(
-                                  Colors.black.withOpacity(0.5),
-                                  BlendMode.dstATop),
-                              image: AssetImage('assets/main-bg.png'),
-                            )),
+        : Container(
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              resizeToAvoidBottomInset: true,
+              body: LayoutBuilder(
+                builder:
+                    (BuildContext context, BoxConstraints viewportConstraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: viewportConstraints.maxHeight,
                       ),
-                    ),
-                    Expanded(
-                        flex: 5,
-                        child: Card(
-                            margin: EdgeInsets.all(0.0),
-                            elevation: 3.0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0.0),
-                            ),
-                            color: Colors.red,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 20.0, horizontal: 50.0),
-                              child: Form(
-                                key: _formKey,
+                      child: IntrinsicHeight(
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   children: <Widget>[
-                                    Expanded(
-                                      child: Container(),
+                                    Container(
+                                      height: 10,
                                     ),
-                                    TextFormField(
-                                      decoration:
-                                          formTextInputDecoration.copyWith(
-                                        labelText: 'email',
-                                        icon: Icon(
-                                          Icons.email,
-                                          color: Colors.white,
-                                          size: formIconSize,
+                                    Container(
+                                      height: 350,
+                                      decoration: BoxDecoration(
+                                        backgroundBlendMode:
+                                            BlendMode.colorDodge,
+                                        color: Colors.white,
+                                        image: DecorationImage(
+                                          image:
+                                              AssetImage("assets/children.png"),
+                                          fit: BoxFit.contain,
                                         ),
                                       ),
-                                      validator: (val) =>
-                                          val.isEmpty ? 'Enter an email' : null,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          email = val;
-                                        });
-                                      },
                                     ),
-                                    Expanded(
-                                      child: Container(),
-                                    ),
-                                    TextFormField(
-                                      decoration:
-                                          formTextInputDecoration.copyWith(
-                                        labelText: 'password',
-                                        icon: Icon(
-                                          Icons.lock,
-                                          color: Colors.white,
-                                          size: formIconSize,
-                                        ),
-                                      ),
-                                      validator: (val) => val.length < 6
-                                          ? 'Enter a password six characters long'
-                                          : null,
-                                      obscureText: true,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          password = val;
-                                        });
-                                      },
-                                    ),
-                                    Expanded(
-                                      child: Container(),
-                                    ),
-                                    Text(error,
+                                    Container(
+                                        child: Center(
+                                      child: Text(
+                                        'LET\'S START A REVOLUTION',
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14.0)),
+                                          color: Colors.brown,
+                                          fontFamily: 'bradhitc',
+                                          fontSize: 20.0,
+                                        ),
+                                      ),
+                                    )),
+                                    Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        children: <Widget>[
+                                          TextFormField(
+                                            decoration: formTextInputDecoration
+                                                .copyWith(
+                                              labelText: 'Email',
+                                              suffixIcon: Icon(
+                                                Icons.email,
+                                                color: Colors.brown,
+                                                size: formIconSize,
+                                              ),
+                                            ),
+                                            validator: (val) => val.isEmpty
+                                                ? 'Enter an email'
+                                                : null,
+                                            onChanged: (val) {
+                                              setState(() {
+                                                email = val;
+                                              });
+                                            },
+                                          ),
+                                          TextFormField(
+                                            decoration: formTextInputDecoration
+                                                .copyWith(
+                                              labelText: 'Password',
+                                              suffixIcon: Icon(
+                                                Icons.lock,
+                                                color: Colors.brown,
+                                                size: formIconSize,
+                                              ),
+                                            ),
+                                            validator: (val) => val.length < 6
+                                                ? 'Enter a password six characters long'
+                                                : null,
+                                            obscureText: true,
+                                            onChanged: (val) {
+                                              setState(() {
+                                                password = val;
+                                              });
+                                            },
+                                          ),
+                                          Text(error,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14.0)),
+                                        ],
+                                      ),
+                                    ),
                                     Expanded(
                                       child: Container(),
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        FlatButton(
-                                          child: Text(
-                                            'New member?',
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'Oxygen',
-                                              fontSize: 13.0,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 0.0, horizontal: 50.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          FlatButton(
+                                            child: Text(
+                                              'Need an account?',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontFamily: 'bradhitc',
+                                                fontSize: 13.0,
+                                              ),
                                             ),
+                                            onPressed: widget.toggleView,
                                           ),
-                                          onPressed: widget.toggleView,
-                                        ),
-                                        FlatButton(
-                                          child: Text(
-                                            'Forgot password',
-                                            textAlign: TextAlign.end,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'Oxygen',
-                                              fontSize: 13.0,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            if (email != '') {
-                                              await _resetPassword(email);
-                                            } else {
-                                              error =
-                                                  "Enter valid email to reset password";
-                                              print(error);
-                                            }
-                                          },
-                                        ),
-                                      ],
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Center(
+                                        child: MainButton(
+                                            text: 'Login',
+                                            myFunc: _signInWithEmailAndPassword,
+                                            myicon:
+                                                Icon(Icons.arrow_forward_ios)),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 25.0,
                                     ),
                                   ],
                                 ),
                               ),
-                            ))),
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                SocialButton(
-                                  image: 'assets/logos_facebook.png',
-                                  text: 'FACEBOOK',
-                                ),
-                                SocialButton(
-                                  image: 'assets/logos_google-icon.png',
-                                  text: 'GOOGLE  ',
-                                ),
-                              ],
-                            ),
-                            Expanded(
-                              child: Container(),
-                            ),
-                            Center(
-                              child: MainButton(
-                                  text: 'Login',
-                                  myFunc: _signInWithEmailAndPassword,
-                                  myicon: Icon(Icons.arrow_forward_ios)),
-                            ),
-                            SizedBox(
-                              height: 15.0,
+                            Positioned(
+                              top: 0.0,
+                              left: 0.0,
+                              right: 0.0,
+                              child: CarpoolAppBar(
+                                screenText: 'Login',
+                                bgColor: Colors.transparent,
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Positioned(
-                  top: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: CarpoolAppBar(
-                    screenText: 'Login',
-                  ),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
           );
   }

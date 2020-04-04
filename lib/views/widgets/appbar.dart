@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 
 class CarpoolAppBar extends StatelessWidget {
   final String screenText;
+  final Color bgColor;
 
-  CarpoolAppBar({Key key, this.screenText}) : super(key: key);
+  CarpoolAppBar({Key key, this.screenText, this.bgColor}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     String mainScreenText = 'CarPoolKE KIDS EDITION';
     return AppBar(
       elevation: 0.0,
-      backgroundColor: Colors.transparent,
+      backgroundColor: bgColor,
       centerTitle: false,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,9 +22,9 @@ class CarpoolAppBar extends StatelessWidget {
           Text(
             '$mainScreenText',
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.red,
               fontSize: 20.0,
-              fontFamily: 'Oxygen',
+              fontFamily: 'bradhitc',
             ),
           )
         ],

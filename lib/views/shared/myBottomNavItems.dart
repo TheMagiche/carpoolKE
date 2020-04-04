@@ -17,14 +17,14 @@ class MyBottomNavItems extends StatelessWidget {
           Icon(
             myBtnIcon,
             size: 20,
-            color: Colors.red,
+            color: Colors.white,
           ),
           Text(
             myBtnString,
             style: TextStyle(
               fontFamily: 'Oxygen',
               fontSize: 10.0,
-              color: Colors.red,
+              color: Colors.white,
             ),
           )
         ],
