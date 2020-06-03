@@ -39,14 +39,14 @@ class _ConfirmCardState extends State<ConfirmCard> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
           ),
           SizedBox(
             width: 40.0,
           ),
           Text(
             "Sending Request",
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(fontFamily: 'bradhitc', color: Colors.brown),
           )
         ],
       ),
@@ -100,7 +100,7 @@ class _ConfirmCardState extends State<ConfirmCard> {
     return Container(
       height: MediaQuery.of(context).size.height / 2,
       padding: EdgeInsets.all(10.0),
-      color: Colors.black,
+      color: Colors.brown,
       child: Center(
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,19 +110,21 @@ class _ConfirmCardState extends State<ConfirmCard> {
           // From
           ListTile(
             leading: Icon(
-              Icons.location_on,
+              Icons.my_location,
               color: Colors.white,
             ),
             title: widget.departure == ""
                 ? Text(
                     "Departure not selected",
                     style: TextStyle(
+                      fontFamily: 'Oxygen',
                       color: Colors.white,
                     ),
                   )
                 : Text(
                     widget.departure,
                     style: TextStyle(
+                      fontFamily: 'Oxygen',
                       color: Colors.white,
                     ),
                   ),
@@ -132,7 +134,7 @@ class _ConfirmCardState extends State<ConfirmCard> {
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width / 2,
-                color: Color(0xFF808080),
+                color: Colors.brown,
                 height: 2.0,
               ),
             ],
@@ -147,18 +149,21 @@ class _ConfirmCardState extends State<ConfirmCard> {
                 ? Text(
                     "Destination not selected",
                     style: TextStyle(
+                      fontFamily: 'Oxygen',
                       color: Colors.white,
                     ),
                   )
                 : Text(
                     widget.destination,
                     style: TextStyle(
+                      fontFamily: 'Oxygen',
                       color: Colors.white,
                     ),
                   ),
             subtitle: Text(
               "Time : " + convertTimeTo12Hour(widget.time.toString()),
               style: TextStyle(
+                fontFamily: 'Oxygen',
                 color: Colors.white,
               ),
             ),
@@ -180,11 +185,13 @@ class _ConfirmCardState extends State<ConfirmCard> {
                     child: Text(
                       "Confirm Ride",
                       style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                        fontSize: 18.0,
+                        fontFamily: 'bradhitc',
+                      ),
                     ),
                   ),
                   textColor: Colors.white,
-                  color: Colors.green,
+                  color: Colors.red,
                   padding: EdgeInsets.all(12.0),
                 ),
               )

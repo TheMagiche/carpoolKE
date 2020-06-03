@@ -1,6 +1,8 @@
-import 'package:carpoolke/models/request_rides.dart';
+import 'package:carpoolke/models/offer_rides.dart';
+import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/services/Data/database.dart';
 import 'package:carpoolke/views/shared/convert_time.dart';
+import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
 class RidesComponent extends StatefulWidget {
@@ -10,7 +12,7 @@ class RidesComponent extends StatefulWidget {
 
 class _RidesComponentState extends State<RidesComponent> {
   bool accept = true;
-  List<RequestRides> _requests = [];
+  List<OfferRideRequest> _requests = [];
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
@@ -22,11 +24,17 @@ class _RidesComponentState extends State<RidesComponent> {
     fetchRequestRides();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<dynamic> fetchRequestRides() async {
-    List<RequestRides> fetchedRequests = [];
-    var results = await RequestRidesDataBaseServices().getOfferRidesRequest();
+    List<OfferRideRequest> fetchedRequests = [];
+    var results =
+        await OfferRideRequestDataBaseServices().getOfferRidesRequest();
     fetchedRequests = results.documents
-        .map((snapshot) => RequestRides.fromMap(snapshot.data))
+        .map((snapshot) => OfferRideRequest.fromMap(snapshot.data))
         .toList();
 
     setState(() {
@@ -37,7 +45,7 @@ class _RidesComponentState extends State<RidesComponent> {
   }
 
   deleteRequestRides(String id) async {
-    await RequestRidesDataBaseServices().deleteRidesRequest(id);
+    await OfferRideRequestDataBaseServices().deleteOfferRidesRequest(id);
   }
 
   Future<dynamic> _onRefresh() {
@@ -63,7 +71,7 @@ class _RidesComponentState extends State<RidesComponent> {
       key: Key(UniqueKey().toString()),
       direction: DismissDirection.startToEnd,
       background: Container(
-        color: Colors.black,
+        color: Colors.brown,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -78,22 +86,33 @@ class _RidesComponentState extends State<RidesComponent> {
         elevation: 2,
         child: Container(
           padding: EdgeInsets.all(5.0),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundImage: AssetImage("assets/accountAvatar.jpg"),
-              radius: 25,
-            ),
-            title: Text(_requests[index].destination),
-            subtitle:
-                Text("Time: " + convertTimeTo12Hour(_requests[index].time)),
-            trailing: accept == true
-                ? Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                  )
-                : Icon(
-                    Icons.info,
+          child: StreamBuilder(
+            stream:
+                UserDataBaseServices(uid: _requests[index].driverUid).userData,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Loading();
+              } else {
+                UserData userData = snapshot.data;
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(userData.userImage),
+                    radius: 25,
                   ),
+                  title: Text(_requests[index].destination),
+                  subtitle: Text(
+                      "Time: " + convertTimeTo12Hour(_requests[index].time)),
+                  trailing: accept == true
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Colors.green,
+                        )
+                      : Icon(
+                          Icons.info,
+                        ),
+                );
+              }
+            },
           ),
         ),
       ),
@@ -137,33 +156,31 @@ class _RidesComponentState extends State<RidesComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("My Requests"),
-          centerTitle: true,
-          backgroundColor: Colors.black,
-        ),
-        body: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Container(
-                child: Center(
-                  child: Text(
-                    "Swipe to delete",
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            bottom: 25,
+            left: 0.0,
+            right: 0.0,
+            child: Container(
+              child: Center(
+                child: Text(
+                  "Swipe to delete",
+                  style: TextStyle(
+                    color: Colors.grey,
                   ),
                 ),
               ),
             ),
-            Expanded(
-              child: _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : _buildRequestList(),
-            ),
-          ],
-        ));
+          ),
+          Container(
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : _buildRequestList(),
+          ),
+        ],
+      ),
+    );
   }
 }

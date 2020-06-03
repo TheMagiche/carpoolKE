@@ -25,7 +25,7 @@ class _MyRidesState extends State<MyRides> {
   Future<dynamic> fetchAcceptedRides() async {
     List<AcceptedRide> fetchedRequests = [];
     var results =
-        await AcceptedRideRequestDataBaseServices().getOfferRidesRequest();
+        await AcceptedRideRequestDataBaseServices().getAcceptedRidesRequest();
     fetchedRequests = results.documents
         .map((snapshot) => AcceptedRide.fromMap(snapshot.data))
         .toList();
@@ -75,7 +75,7 @@ class _MyRidesState extends State<MyRides> {
         ),
         title: ListTile(
           title: Text(
-            _rides[index].acceptedDriverName,
+            ' _rides[index].acceptedDriverName',
             style: TextStyle(
               color: Colors.black,
             ),
@@ -101,8 +101,8 @@ class _MyRidesState extends State<MyRides> {
                 color: Colors.green,
               ),
               title: GestureDetector(
-                  child: Text(_rides[index].acceptedDriverNumber)),
-              onTap: () => openPhone(_rides[index].acceptedDriverNumber))
+                  child: Text('_rides[index].acceptedDriverNumber')),
+              onTap: () => openPhone('_rides[index].acceptedDriverNumber'))
         ],
       ),
     );
@@ -110,15 +110,16 @@ class _MyRidesState extends State<MyRides> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("My Rides"),
-        backgroundColor: Colors.black,
-        centerTitle: true,
+    return SafeArea(
+      child: Stack(
+        children: <Widget>[
+          Container(
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : _buildRidesList(),
+          ),
+        ],
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _buildRidesList(),
     );
   }
 

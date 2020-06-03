@@ -1,30 +1,22 @@
+import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/views/home/driver/driver.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OfferRide extends StatefulWidget {
+  final User user;
+
+  const OfferRide({Key key, this.user}) : super(key: key);
+
   @override
   _OfferRideState createState() => _OfferRideState();
 }
 
 class _OfferRideState extends State<OfferRide> {
-  bool carRegistered = false;
+  bool carRegistered = true;
 
   @override
   void initState() {
     super.initState();
-    //checks for what screen to be displayed
-    screenCheck();
-  }
-
-  screenCheck() {
-    SharedPreferences.getInstance().then((pref) {
-      setState(() {
-        carRegistered = pref.getBool('hasCar');
-      });
-    }).catchError((e) {
-      print(e);
-    });
   }
 
   //callback executed when someone register a car -- decides again which widget to load
@@ -37,7 +29,9 @@ class _OfferRideState extends State<OfferRide> {
   @override
   Widget build(BuildContext context) {
     return carRegistered
-        ? DriverComponent()
+        ? DriverComponent(
+            uid: widget.user.uid,
+          )
         : NotRegistered(car: carRegistered, callback: reloadOfferRide);
   }
 }

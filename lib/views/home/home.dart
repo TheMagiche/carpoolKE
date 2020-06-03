@@ -1,10 +1,7 @@
-// import 'package:carpoolke/services/auth.dart';
 import 'package:carpoolke/views/home/chat/chat_users.dart';
-// import 'package:carpoolke/views/home/driver/driver.dart';
-import 'package:carpoolke/views/home/driver/offerRide.dart';
+import 'package:carpoolke/views/home/driver/driversPage.dart';
 import 'package:carpoolke/views/home/profile/profile.dart';
-import 'package:carpoolke/views/home/rides/findRide.dart';
-// import 'package:carpoolke/views/home/rides/rides.dart';
+import 'package:carpoolke/views/home/rides/ridesPage.dart';
 import 'package:carpoolke/views/home/wallet/wallet.dart';
 import 'package:carpoolke/views/shared/myBottomNavItems.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -23,10 +20,10 @@ class _HomeState extends State<Home> {
   // final Authservice _auth = Authservice();
 
   ChatUsers chatUsers;
-  OfferRide driverComponent;
+  DriversPage driverComponent;
   ProfileComponent profileComponent;
   // RidesComponent
-  FindRide ridesComponent;
+  RidesPage ridesComponent;
   WalletComponent walletComponent;
 
   int currentTab = 2;
@@ -36,9 +33,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     chatUsers = ChatUsers();
-    driverComponent = OfferRide();
+    driverComponent = DriversPage(user: widget.user);
     profileComponent = ProfileComponent(user: widget.user);
-    ridesComponent = FindRide();
+    ridesComponent = RidesPage();
     walletComponent = WalletComponent();
 
     pages = [
@@ -57,19 +54,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   title: Text(
-      //     'CarpoolKe',
-      //     style: TextStyle(
-      //       fontFamily: 'bradhitc',
-      //       fontSize: 25.0,
-      //       color: Colors.red,
-      //     ),
-      //   ),
-      //   actions: <Widget>[],
-      // ),
-      body: currentPage,
+      body: SafeArea(
+        child: currentPage,
+      ),
       bottomNavigationBar: CurvedNavigationBar(
         index: currentTab,
         onTap: (int index) {

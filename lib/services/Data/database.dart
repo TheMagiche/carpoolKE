@@ -98,11 +98,19 @@ class OfferRideRequestDataBaseServices {
     return offerRequestCollection.document(requestedUserID).get();
   }
 
-  Future addOfferRidesRequest(String uid, String requestID, String destination,
-      String time, String price) async {
+  Future addOfferRidesRequest(
+      String driverUid,
+      String passengerUid,
+      String requestID,
+      String departure,
+      String destination,
+      String time,
+      String price) async {
     return await offerRequestCollection.add({
-      'uid': uid,
+      'driverUid': driverUid,
+      'passengerUid': passengerUid,
       'requestID': requestID,
+      'departure': departure,
       'destination': destination,
       'time': time,
       'price': price
@@ -129,7 +137,7 @@ class AcceptedRideRequestDataBaseServices {
   final CollectionReference acceptedRequestCollection =
       Firestore.instance.collection('acceptedRidesRequest');
 
-  Future<QuerySnapshot> getOfferRidesRequest() {
+  Future<QuerySnapshot> getAcceptedRidesRequest() {
     return acceptedRequestCollection.getDocuments();
   }
 
@@ -142,36 +150,50 @@ class AcceptedRideRequestDataBaseServices {
   }
 
   Future addAcceptedRidesRequest(
-      String uid,
-      String acceptedDriverName,
-      String acceptedDriverNumber,
-      String destination,
-      String time,
-      String rate) async {
+    String uid,
+    String acceptedDriverUid,
+    String passengerUid,
+    String departure,
+    String destination,
+    String time,
+    String rate,
+    String requestID,
+    String price,
+  ) async {
     return await acceptedRequestCollection.add({
       'uid': uid,
-      'acceptedDriverName': acceptedDriverName,
-      'acceptedDriverNumber': acceptedDriverNumber,
+      'acceptedDriverUid': acceptedDriverUid,
+      'passengerUid': passengerUid,
+      'departure': departure,
       'destination': destination,
       'time': time,
-      'rate': rate
+      'rate': rate,
+      'requestID': requestID,
+      'price': price,
     });
   }
 
   Future updateAcceptedRidesRequest(
-      String uid,
-      String acceptedDriverName,
-      String acceptedDriverNumber,
-      String destination,
-      String time,
-      String rate) async {
+    String uid,
+    String acceptedDriverUid,
+    String passengerUid,
+    String departure,
+    String destination,
+    String time,
+    String rate,
+    String requestID,
+    String price,
+  ) async {
     return await acceptedRequestCollection.document(uid).setData({
       'uid': uid,
-      'acceptedDriverName': acceptedDriverName,
-      'acceptedDriverNumber': acceptedDriverNumber,
+      'acceptedDriverUid': acceptedDriverUid,
+      'passengerUid': passengerUid,
+      'departure': departure,
       'destination': destination,
       'time': time,
-      'rate': rate
+      'rate': rate,
+      'requestID': requestID,
+      'price': price,
     });
   }
 

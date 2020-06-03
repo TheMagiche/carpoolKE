@@ -1,4 +1,4 @@
-import 'package:carpoolke/models/request_rides.dart';
+import 'package:carpoolke/models/accepted_rides.dart';
 import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/services/Data/database.dart';
 import 'package:carpoolke/views/home/driver/acceptCard.dart';
@@ -6,19 +6,19 @@ import 'package:carpoolke/views/shared/convert_time.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
-class DriverComponent extends StatefulWidget {
+class AcceptedRides extends StatefulWidget {
   final String uid;
-  DriverComponent({Key key, this.uid}) : super(key: key);
+  AcceptedRides({Key key, this.uid}) : super(key: key);
 
   @override
-  _DriverComponentState createState() => _DriverComponentState();
+  _AcceptedRidesState createState() => _AcceptedRidesState();
 }
 
-class _DriverComponentState extends State<DriverComponent> {
+class _AcceptedRidesState extends State<AcceptedRides> {
   bool accept = true;
 
   // List that contains requests from users
-  List<RequestRides> _requests = [];
+  List<AcceptedRide> _requests = [];
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
@@ -31,10 +31,11 @@ class _DriverComponentState extends State<DriverComponent> {
   }
 
   Future<dynamic> fetchOfferRequest() async {
-    List<RequestRides> fetchedRequests = [];
-    var results = await RequestRidesDataBaseServices().getOfferRidesRequest();
+    List<AcceptedRide> fetchedRequests = [];
+    var results =
+        await AcceptedRideRequestDataBaseServices().getAcceptedRidesRequest();
     fetchedRequests = results.documents
-        .map((snapshot) => RequestRides.fromMap(snapshot.data))
+        .map((snapshot) => AcceptedRide.fromMap(snapshot.data))
         .toList();
 
     setState(() {

@@ -1,7 +1,6 @@
-// import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/services/Data/database.dart';
+import 'package:carpoolke/services/auth.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:carpoolke/views/shared/main_btn.dart';
@@ -29,7 +28,7 @@ class _EditProfileState extends State<EditProfile> {
   String _userImage = '';
   File _image;
   bool isLoading = false;
-
+  final Authservice _auth = Authservice();
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<UserData>(
@@ -37,6 +36,7 @@ class _EditProfileState extends State<EditProfile> {
         builder: (context, snapshot) {
           if (snapshot.hasData && isLoading != true) {
             UserData userData = snapshot.data;
+
             return Scaffold(
               appBar: AppBar(
                 leading: IconButton(
@@ -70,7 +70,7 @@ class _EditProfileState extends State<EditProfile> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
-                                userData.userImage == ''
+                                _userImage == ''
                                     ? CircleAvatar(
                                         radius: 80.0,
                                         backgroundImage: AssetImage(
@@ -82,9 +82,7 @@ class _EditProfileState extends State<EditProfile> {
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
                                             fit: BoxFit.cover,
-                                            image: NetworkImage(
-                                              _userImage,
-                                            ),
+                                            image: NetworkImage(_userImage),
                                           ),
                                         ),
                                       ),
@@ -249,6 +247,14 @@ class _EditProfileState extends State<EditProfile> {
                         }
 
                         Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(height: 5.0),
+                    MainButton(
+                      text: 'Log Out',
+                      myicon: Icon(Icons.arrow_forward_ios),
+                      myFunc: () async {
+                        await _auth.signOut();
                       },
                     ),
                     SizedBox(height: 5.0),

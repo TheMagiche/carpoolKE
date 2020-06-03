@@ -1,14 +1,16 @@
 import 'package:carpoolke/views/widgets/spinner_text.dart';
 import 'package:flutter/material.dart';
 
-class CarpoolAppBar extends StatelessWidget {
+class AltCarpoolAppBar extends StatelessWidget {
   final String screenText;
   final Color bgColor;
+  final TabBar tabBar;
 
-  CarpoolAppBar({
+  AltCarpoolAppBar({
     Key key,
     this.screenText,
     this.bgColor,
+    this.tabBar,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class CarpoolAppBar extends StatelessWidget {
           )
         ],
       ),
+      bottom: tabBar,
     );
   }
 }

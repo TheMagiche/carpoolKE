@@ -184,6 +184,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  geoflutterfire:
+    dependency: "direct main"
+    description:
+      name: geoflutterfire
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   geolocator:
     dependency: "direct main"
     description:
@@ -205,6 +212,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  google_maps_flutter:
+    dependency: "direct main"
+    description:
+      name: google_maps_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.25+3"
   google_sign_in:
     dependency: "direct main"
     description:
@@ -338,6 +352,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.23.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -492,4 +513,4 @@ packages:
     version: "3.5.0"
 sdks:
   dart: ">=2.6.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.4 <2.0.0"
+  flutter: ">=1.12.13+hotfix.5 <2.0.0"

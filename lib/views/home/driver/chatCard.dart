@@ -1,75 +1,60 @@
-import 'dart:async';
-import 'package:carpoolke/models/user.dart';
+import 'package:flutter/material.dart';
+import 'package:carpoolke/views/home/chat/chat.dart';
 import 'package:carpoolke/services/Data/database.dart';
 import 'package:carpoolke/views/shared/convert_time.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
-import 'package:flutter/material.dart';
-import 'setPrice.dart';
+import 'package:carpoolke/models/user.dart';
 
-class AcceptCard extends StatefulWidget {
+class ChatCard extends StatefulWidget {
   final String driverUid;
+  final String acceptedDriverUid;
   final String passengerUid;
   final String departure;
   final String destination;
   final String time;
+  final String rate;
   final String requestID;
-  AcceptCard(this.driverUid, this.passengerUid, this.departure,
-      this.destination, this.time, this.requestID);
+  final String price;
+  const ChatCard(
+      {Key key,
+      this.driverUid,
+      this.acceptedDriverUid,
+      this.passengerUid,
+      this.departure,
+      this.destination,
+      this.time,
+      this.rate,
+      this.requestID,
+      this.price})
+      : super(key: key);
+
   @override
-  _AcceptCardState createState() => _AcceptCardState();
+  _ChatCardState createState() => _ChatCardState();
 }
 
-class _AcceptCardState extends State<AcceptCard> {
-  String price = "0.0";
-
+class _ChatCardState extends State<ChatCard> {
   @override
   void initState() {
     super.initState();
   }
 
-  _offerRide(BuildContext context) {
-    // alertbox
-    final alertDialog = AlertDialog(
+  _acceptOffer(BuildContext context) {
+    final chatDialog = AlertDialog(
       content: Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-          ),
-          SizedBox(
-            width: 40.0,
-          ),
-          Text(
-            "Notifying user",
-            style: TextStyle(color: Colors.grey),
-          )
-        ],
+        children: <Widget>[],
       ),
     );
     showDialog(
       context: context,
-      builder: (BuildContext context) => alertDialog,
+      builder: (BuildContext context) => chatDialog,
       barrierDismissible: false,
     );
 
-    _addPostOfferRequest();
+    _chatWithUser();
   }
 
-  Future<dynamic> _addPostOfferRequest() async {
-    await OfferRideRequestDataBaseServices().addOfferRidesRequest(
-        widget.driverUid,
-        widget.passengerUid,
-        widget.requestID,
-        widget.departure,
-        widget.destination,
-        widget.time,
-        price);
-    Timer(Duration(seconds: 3), () {
-      Navigator.of(context).pop();
-      Navigator.of(context).pop("success");
-    });
-  }
-
+  void _chatWithUser() {}
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -170,31 +155,8 @@ class _AcceptCardState extends State<AcceptCard> {
                 color: Colors.white,
               ),
               title: Text(
-                price.toString() + " Kes",
+                widget.price + " Kes",
                 style: TextStyle(color: Colors.white),
-              ),
-              trailing: FlatButton(
-                color: Colors.white,
-                textColor: Colors.red,
-                child: Text(
-                  "Set Price",
-                  style: TextStyle(
-                    fontFamily: 'bradhitc',
-                    fontSize: 14,
-                    // fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onPressed: () {
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) => SetPrice()).then((newPrice) {
-                    print(newPrice);
-                    setState(() {
-                      price = newPrice;
-                    });
-                  });
-                },
               ),
             ),
           ),
@@ -214,7 +176,7 @@ class _AcceptCardState extends State<AcceptCard> {
                   // fontWeight: FontWeight.bold,
                 ),
               ),
-              onPressed: () => _offerRide(context),
+              onPressed: () => _acceptOffer(context),
             ),
           )
         ],
