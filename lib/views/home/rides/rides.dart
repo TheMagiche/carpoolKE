@@ -1,17 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carpoolke/models/offer_rides.dart';
 import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/services/Data/database.dart';
+import 'package:carpoolke/views/home/rides/chatCardUser.dart';
 import 'package:carpoolke/views/shared/convert_time.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
 class RidesComponent extends StatefulWidget {
+  final String uid;
+
+  const RidesComponent({Key key, this.uid}) : super(key: key);
   @override
   _RidesComponentState createState() => _RidesComponentState();
 }
 
 class _RidesComponentState extends State<RidesComponent> {
-  bool accept = true;
+  bool accept = false;
   List<OfferRideRequest> _requests = [];
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
@@ -31,8 +36,8 @@ class _RidesComponentState extends State<RidesComponent> {
 
   Future<dynamic> fetchRequestRides() async {
     List<OfferRideRequest> fetchedRequests = [];
-    var results =
-        await OfferRideRequestDataBaseServices().getOfferRidesRequest();
+    var results = await OfferRideRequestDataBaseServices()
+        .getOfferRidesRequest(widget.uid);
     fetchedRequests = results.documents
         .map((snapshot) => OfferRideRequest.fromMap(snapshot.data))
         .toList();
@@ -95,22 +100,81 @@ class _RidesComponentState extends State<RidesComponent> {
               } else {
                 UserData userData = snapshot.data;
                 return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(userData.userImage),
-                    radius: 25,
-                  ),
-                  title: Text(_requests[index].destination),
-                  subtitle: Text(
-                      "Time: " + convertTimeTo12Hour(_requests[index].time)),
-                  trailing: accept == true
-                      ? Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                        )
-                      : Icon(
-                          Icons.info,
+                    leading: CircleAvatar(
+                      backgroundImage:
+                          CachedNetworkImageProvider(userData.userImage),
+                      radius: 25,
+                    ),
+                    title: Text(
+                      userData.fname + ' ' + userData.lname,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Oxygen',
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _requests[index].destination,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Oxygen',
+                            fontSize: 12.0,
+                          ),
                         ),
-                );
+                        Text(
+                          convertTimeTo12Hour(
+                            _requests[index].time,
+                          ),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Oxygen',
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: _requests[index].isConfirmed
+                        ? Text(
+                            'Completed',
+                            style: TextStyle(
+                              fontFamily: 'bradhitc',
+                            ),
+                          )
+                        : RaisedButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) => UserChatCard(
+                                        offerID: _requests[index].offerID,
+                                        acceptedDriverUid:
+                                            _requests[index].driverUid,
+                                        passengerUid:
+                                            _requests[index].passengerUid,
+                                        departure: _requests[index].departure,
+                                        destination:
+                                            _requests[index].destination,
+                                        requestID: _requests[index].requestID,
+                                        time: _requests[index].time,
+                                        price: _requests[index].price,
+                                      )).then((snack) =>
+                                  Scaffold.of(context).showSnackBar(snack));
+                            },
+                            elevation: 6.0,
+                            padding: EdgeInsets.all(2.0),
+                            color: Colors.brown,
+                            textColor: Colors.white,
+                            child: Text(
+                              'Preview',
+                              style: TextStyle(
+                                  fontFamily: 'bradhitc',
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.0),
+                            ),
+                          ));
               }
             },
           ),
@@ -160,7 +224,7 @@ class _RidesComponentState extends State<RidesComponent> {
       child: Stack(
         children: <Widget>[
           Positioned(
-            bottom: 25,
+            bottom: 30,
             left: 0.0,
             right: 0.0,
             child: Container(

@@ -8,11 +8,10 @@ class ConfirmCard extends StatefulWidget {
   final String uid;
   final String departure;
   final String destination;
-  final String requestID;
+
   final TimeOfDay time;
 
-  ConfirmCard(
-      {this.uid, this.departure, this.destination, this.requestID, this.time});
+  ConfirmCard({this.uid, this.departure, this.destination, this.time});
 
   @override
   _ConfirmCardState createState() => _ConfirmCardState();
@@ -21,11 +20,12 @@ class ConfirmCard extends StatefulWidget {
 class _ConfirmCardState extends State<ConfirmCard> {
   Future<dynamic> _addPostOfferRequest(SnackBar snack) async {
     await RequestRidesDataBaseServices().addRidesRequest(
-        widget.uid,
-        widget.requestID,
-        widget.departure,
-        widget.destination,
-        widget.time.toString());
+      widget.uid,
+      widget.departure,
+      widget.destination,
+      widget.time.toString(),
+      false,
+    );
     Timer(Duration(seconds: 1), () {
       Navigator.of(context).pop();
       Navigator.of(context).pop("success");

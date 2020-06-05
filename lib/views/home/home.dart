@@ -1,8 +1,6 @@
-import 'package:carpoolke/views/home/chat/chat_users.dart';
 import 'package:carpoolke/views/home/driver/driversPage.dart';
 import 'package:carpoolke/views/home/profile/profile.dart';
 import 'package:carpoolke/views/home/rides/ridesPage.dart';
-import 'package:carpoolke/views/home/wallet/wallet.dart';
 import 'package:carpoolke/views/shared/myBottomNavItems.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -17,32 +15,23 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // final Authservice _auth = Authservice();
-
-  ChatUsers chatUsers;
   DriversPage driverComponent;
   ProfileComponent profileComponent;
-  // RidesComponent
   RidesPage ridesComponent;
-  WalletComponent walletComponent;
 
-  int currentTab = 2;
+  int currentTab = 1;
   Widget currentPage;
   List<Widget> pages = [];
 
   @override
   void initState() {
-    chatUsers = ChatUsers();
     driverComponent = DriversPage(user: widget.user);
     profileComponent = ProfileComponent(user: widget.user);
-    ridesComponent = RidesPage();
-    walletComponent = WalletComponent();
+    ridesComponent = RidesPage(user: widget.user);
 
     pages = [
       driverComponent,
-      chatUsers,
       ridesComponent,
-      walletComponent,
       profileComponent,
     ];
     currentPage = ridesComponent;
@@ -75,16 +64,8 @@ class _HomeState extends State<Home> {
             myBtnString: 'Drive',
           ),
           MyBottomNavItems(
-            myBtnIcon: Icons.mail,
-            myBtnString: 'Chat',
-          ),
-          MyBottomNavItems(
-            myBtnIcon: Icons.search,
+            myBtnIcon: Icons.accessibility_new,
             myBtnString: 'Ride',
-          ),
-          MyBottomNavItems(
-            myBtnIcon: Icons.account_balance_wallet,
-            myBtnString: 'Wallet',
           ),
           MyBottomNavItems(
             myBtnIcon: Icons.person,

@@ -4,7 +4,6 @@ import 'package:carpoolke/views/shared/main_btn.dart';
 import 'package:carpoolke/views/widgets/appbar.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
@@ -30,19 +29,13 @@ class _RegisterState extends State<Register> {
   String nationalID = '';
   String phoneNumber = '';
   String password = '';
-  bool hasCar;
+
   Function _registerWithEmailAndPassword;
 
   @override
   void initState() {
     super.initState();
     _registerWithEmailAndPassword = () async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      if (hasCar == true)
-        prefs.setBool('hasCar', true);
-      else
-        prefs.setBool('hasCar', false);
-
       if (_formKey.currentState.validate()) {
         setState(() {
           isloading = true;
@@ -274,57 +267,7 @@ class _RegisterState extends State<Register> {
                                         ],
                                       ),
                                     ),
-                                    Row(
-                                      children: <Widget>[
-                                        Center(
-                                          child: Text(
-                                            "Do you have a vehicle to pool?",
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              fontFamily: 'bradhitc',
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                     Padding(padding: EdgeInsets.all(2.0)),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: <Widget>[
-                                        Text("Yes:",
-                                            style: TextStyle(
-                                                fontSize: 12.0,
-                                                fontFamily: 'bradhitc',
-                                                color: Colors.red)),
-                                        Radio(
-                                          activeColor: Colors.red,
-                                          value: true,
-                                          groupValue: hasCar,
-                                          onChanged: (bool val) {
-                                            setState(() {
-                                              hasCar = val;
-                                            });
-                                          },
-                                        ),
-                                        Text("No:",
-                                            style: TextStyle(
-                                                fontSize: 12.0,
-                                                fontFamily: 'bradhitc',
-                                                color: Colors.red)),
-                                        Radio(
-                                          activeColor: Colors.red,
-                                          value: false,
-                                          groupValue: hasCar,
-                                          onChanged: (bool val) {
-                                            setState(() {
-                                              hasCar = val;
-                                            });
-                                          },
-                                        )
-                                      ],
-                                    ),
                                     Expanded(
                                       child: Container(),
                                     ),

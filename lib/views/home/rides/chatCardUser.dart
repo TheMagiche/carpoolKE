@@ -1,47 +1,90 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:carpoolke/services/Data/database.dart';
 import 'package:carpoolke/views/shared/convert_time.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:carpoolke/models/user.dart';
 
-class ChatCard extends StatefulWidget {
-  final String driverUid;
+class UserChatCard extends StatefulWidget {
+  final String offerID;
   final String acceptedDriverUid;
   final String passengerUid;
   final String departure;
   final String destination;
   final String time;
-  final String rate;
   final String requestID;
   final String price;
-  const ChatCard(
-      {Key key,
-      this.driverUid,
-      this.acceptedDriverUid,
-      this.passengerUid,
-      this.departure,
-      this.destination,
-      this.time,
-      this.rate,
-      this.requestID,
-      this.price})
-      : super(key: key);
+
+  UserChatCard({
+    this.offerID,
+    this.acceptedDriverUid,
+    this.passengerUid,
+    this.departure,
+    this.destination,
+    this.time,
+    this.requestID,
+    this.price,
+  });
 
   @override
-  _ChatCardState createState() => _ChatCardState();
+  _UserChatCardState createState() => _UserChatCardState();
 }
 
-class _ChatCardState extends State<ChatCard> {
-  @override
-  void initState() {
-    super.initState();
+class _UserChatCardState extends State<UserChatCard> {
+  Future<dynamic> _addAcceptRequest(SnackBar snack) async {
+    await AcceptedRideRequestDataBaseServices().addAcceptedRidesRequest(
+      widget.acceptedDriverUid,
+      widget.passengerUid,
+      widget.departure,
+      widget.destination,
+      widget.time,
+      widget.requestID,
+      widget.price,
+    );
+
+    await RequestRidesDataBaseServices().updateRidesRequest(
+      widget.passengerUid,
+      widget.requestID,
+      widget.departure,
+      widget.destination,
+      widget.time,
+      true,
+    );
+
+    await OfferRideRequestDataBaseServices().updateOfferRidesRequest(
+      widget.offerID,
+      widget.acceptedDriverUid,
+      widget.passengerUid,
+      widget.requestID,
+      widget.departure,
+      widget.destination,
+      widget.time,
+      widget.price,
+      true,
+    );
+
+    Timer(Duration(seconds: 5), () {
+      Navigator.of(context).pop();
+      Navigator.of(context).pop("success");
+    });
   }
 
-  _acceptOffer(BuildContext context) {
+  void _acceptOffer(BuildContext context) {
     final chatDialog = AlertDialog(
       content: Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[],
+        children: <Widget>[
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+          ),
+          SizedBox(
+            width: 40.0,
+          ),
+          Text(
+            "Sending Request",
+            style: TextStyle(fontFamily: 'bradhitc', color: Colors.brown),
+          )
+        ],
       ),
     );
     showDialog(
@@ -50,10 +93,21 @@ class _ChatCardState extends State<ChatCard> {
       barrierDismissible: false,
     );
 
-    _chatWithUser();
+    // Snackbar
+    final snack = SnackBar(
+      backgroundColor: Colors.green,
+      content: Text(
+        "Request has been successfully sent!",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+      duration: Duration(seconds: 4),
+    );
+
+    _addAcceptRequest(snack);
   }
 
-  void _chatWithUser() {}
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,7 +122,8 @@ class _ChatCardState extends State<ChatCard> {
           // User details
           Container(
             child: StreamBuilder(
-              stream: UserDataBaseServices(uid: widget.passengerUid).userData,
+              stream:
+                  UserDataBaseServices(uid: widget.acceptedDriverUid).userData,
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 if (!snapshot.hasData) {
                   return Loading();
@@ -79,7 +134,7 @@ class _ChatCardState extends State<ChatCard> {
                       backgroundImage: NetworkImage(userData.userImage),
                     ),
                     title: Text(
-                      "First name: " + userData.fname,
+                      "Driver name: " + userData.fname + ' ' + userData.lname,
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Oxygen',
@@ -90,7 +145,7 @@ class _ChatCardState extends State<ChatCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Last name: " + userData.lname,
+                          "Phone: " + userData.phoneNum,
                           style: TextStyle(
                               color: Colors.white,
                               fontFamily: 'Oxygen',
@@ -168,7 +223,7 @@ class _ChatCardState extends State<ChatCard> {
               color: Colors.red,
               textColor: Colors.white,
               child: Text(
-                "Offer Ride",
+                "Accept Offer",
                 style: TextStyle(
                   fontFamily: 'bradhitc',
                   fontSize: 18,

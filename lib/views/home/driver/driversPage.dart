@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carpoolke/views/widgets/appbar.dart';
 import 'package:carpoolke/models/user.dart';
-import 'offerRide.dart' as first;
-import 'driver.dart' as second;
+import 'driver.dart' as first;
+import 'acceptedRides.dart' as second;
 
 class DriversPage extends StatefulWidget {
   final User user;
@@ -20,42 +20,50 @@ class _DriversPageState extends State<DriversPage> {
     return Container(
       width: double.infinity,
       height: double.maxFinite,
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            CarpoolAppBar(
-              screenText: 'Driver\'s Rides',
-              bgColor: Colors.white,
-            ),
-            TabBar(tabs: <Widget>[
-              Tab(
-                icon: Icon(
-                  Icons.arrow_back,
-                  size: 25.0,
-                  color: Colors.red,
+      child: SingleChildScrollView(
+        child: DefaultTabController(
+          length: 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              CarpoolAppBar(
+                screenText: 'Driver\'s Rides',
+                bgColor: Colors.white,
+              ),
+              TabBar(
+                  labelStyle: TextStyle(fontFamily: 'Oxygen', fontSize: 12.0),
+                  labelColor: Colors.brown,
+                  tabs: <Widget>[
+                    Tab(
+                      icon: Icon(
+                        Icons.dashboard,
+                        size: 20.0,
+                        color: Colors.red,
+                      ),
+                      text: 'Offer Rides',
+                    ),
+                    Tab(
+                      icon: Icon(
+                        Icons.flag,
+                        size: 20.0,
+                        color: Colors.red,
+                      ),
+                      text: 'Accepted Rides',
+                    )
+                  ]),
+              Container(
+                height: screenHeight * 0.70,
+                child: TabBarView(
+                  children: <Widget>[
+                    first.DriverComponent(
+                      uid: widget.user.uid,
+                    ),
+                    second.AcceptedRides(uid: widget.user.uid),
+                  ],
                 ),
               ),
-              Tab(
-                  icon: Icon(
-                Icons.arrow_forward,
-                size: 25.0,
-                color: Colors.red,
-              ))
-            ]),
-            Container(
-              height: screenHeight * 0.70,
-              child: TabBarView(
-                children: <Widget>[
-                  first.OfferRide(
-                    user: widget.user,
-                  ),
-                  second.DriverComponent(uid: widget.user.uid),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

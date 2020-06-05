@@ -255,6 +255,7 @@ class _EditProfileState extends State<EditProfile> {
                       myicon: Icon(Icons.arrow_forward_ios),
                       myFunc: () async {
                         await _auth.signOut();
+                        Navigator.of(context).pop();
                       },
                     ),
                     SizedBox(height: 5.0),

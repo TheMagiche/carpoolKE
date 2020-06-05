@@ -1,9 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carpoolke/services/Data/database.dart';
 import 'package:carpoolke/views/shared/convert_time.dart';
+import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:carpoolke/models/accepted_rides.dart';
+import 'package:carpoolke/models/user.dart';
+import 'package:carpoolke/views/shared/phone_call.dart';
 
 class MyRides extends StatefulWidget {
+  final String uid;
+
+  const MyRides({Key key, this.uid}) : super(key: key);
+
   @override
   _MyRidesState createState() => _MyRidesState();
 }
@@ -24,8 +32,8 @@ class _MyRidesState extends State<MyRides> {
 
   Future<dynamic> fetchAcceptedRides() async {
     List<AcceptedRide> fetchedRequests = [];
-    var results =
-        await AcceptedRideRequestDataBaseServices().getAcceptedRidesRequest();
+    var results = await AcceptedRideRequestDataBaseServices()
+        .getAcceptedPassengerRidesRequest(widget.uid);
     fetchedRequests = results.documents
         .map((snapshot) => AcceptedRide.fromMap(snapshot.data))
         .toList();
@@ -68,43 +76,76 @@ class _MyRidesState extends State<MyRides> {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      child: ExpansionTile(
-        leading: CircleAvatar(
-          backgroundImage: AssetImage("assets/defaultUser.jpg"),
-          radius: 25,
-        ),
-        title: ListTile(
-          title: Text(
-            ' _rides[index].acceptedDriverName',
-            style: TextStyle(
-              color: Colors.black,
-            ),
-          ),
-          subtitle: Text(_rides[index].destination +
-              " : " +
-              convertTimeTo12Hour(_rides[index].time)),
-        ),
-        trailing: Container(
-          child: Text(
-            _rides[index].rate + " Rs",
-            style: TextStyle(
-              color: Colors.green,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        children: <Widget>[
-          ListTile(
-              leading: Icon(
-                Icons.phone,
-                color: Colors.green,
-              ),
-              title: GestureDetector(
-                  child: Text('_rides[index].acceptedDriverNumber')),
-              onTap: () => openPhone('_rides[index].acceptedDriverNumber'))
-        ],
-      ),
+      child: StreamBuilder(
+          stream: UserDataBaseServices(uid: _rides[index].acceptedDriverUid)
+              .userData,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Loading();
+            } else {
+              UserData userData = snapshot.data;
+              return ExpansionTile(
+                leading: CircleAvatar(
+                  backgroundImage:
+                      CachedNetworkImageProvider(userData.userImage),
+                  radius: 25,
+                ),
+                title: ListTile(
+                  title: Text(
+                    userData.fname + ' ' + userData.lname,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Oxygen',
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _rides[index].destination,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Oxygen',
+                          fontSize: 12.0,
+                        ),
+                      ),
+                      Text(
+                        convertTimeTo12Hour(
+                          _rides[index].time,
+                        ),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Oxygen',
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                trailing: Container(
+                  child: Text(
+                    _rides[index].price + " Kes",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontFamily: 'bradhitc',
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                children: <Widget>[
+                  ListTile(
+                      leading: Icon(
+                        Icons.phone,
+                        color: Colors.brown,
+                      ),
+                      title: GestureDetector(child: Text(userData.phoneNum)),
+                      onTap: () => openPhone(userData.phoneNum))
+                ],
+              );
+            }
+          }),
     );
   }
 
@@ -122,6 +163,4 @@ class _MyRidesState extends State<MyRides> {
       ),
     );
   }
-
-  openPhone(String acceptedDriverNumber) {}
 }

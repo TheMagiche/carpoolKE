@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carpoolke/models/accepted_rides.dart';
 import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/services/Data/database.dart';
-import 'package:carpoolke/views/home/driver/acceptCard.dart';
 import 'package:carpoolke/views/shared/convert_time.dart';
+import 'package:carpoolke/views/shared/phone_call.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -32,8 +33,8 @@ class _AcceptedRidesState extends State<AcceptedRides> {
 
   Future<dynamic> fetchOfferRequest() async {
     List<AcceptedRide> fetchedRequests = [];
-    var results =
-        await AcceptedRideRequestDataBaseServices().getAcceptedRidesRequest();
+    var results = await AcceptedRideRequestDataBaseServices()
+        .getAcceptedDriverRidesRequest(widget.uid);
     fetchedRequests = results.documents
         .map((snapshot) => AcceptedRide.fromMap(snapshot.data))
         .toList();
@@ -66,66 +67,77 @@ class _AcceptedRidesState extends State<AcceptedRides> {
   Widget _requestCards(BuildContext context, int index) {
     return Card(
       elevation: 2,
-      child: GestureDetector(
-        onTap: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (context) => AcceptCard(
-                  widget.uid,
-                  _requests[index].uid,
-                  _requests[index].departure,
-                  _requests[index].destination,
-                  _requests[index].time,
-                  _requests[index].requestID)).then((check) {
-            if (check == "success") {
-              //Show Snackbar
-              final snack = SnackBar(
-                backgroundColor: Colors.green,
-                content: Text(
-                  "Notified User!",
-                  style: TextStyle(
-                    color: Colors.white,
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      child: StreamBuilder(
+          stream: UserDataBaseServices(uid: _requests[index].acceptedDriverUid)
+              .userData,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Loading();
+            } else {
+              UserData userData = snapshot.data;
+              return ExpansionTile(
+                leading: CircleAvatar(
+                  backgroundImage:
+                      CachedNetworkImageProvider(userData.userImage),
+                  radius: 25,
+                ),
+                title: ListTile(
+                  title: Text(
+                    userData.fname + ' ' + userData.lname,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Oxygen',
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _requests[index].destination,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Oxygen',
+                          fontSize: 12.0,
+                        ),
+                      ),
+                      Text(
+                        convertTimeTo12Hour(
+                          _requests[index].time,
+                        ),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Oxygen',
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                duration: Duration(seconds: 4),
-              );
-              Scaffold.of(context).showSnackBar(snack);
-            }
-          }).catchError((e) {
-            print(e);
-          });
-        },
-        child: Container(
-          padding: EdgeInsets.all(5.0),
-          child: StreamBuilder(
-            stream: UserDataBaseServices(uid: _requests[index].uid).userData,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Loading();
-              } else {
-                UserData userData = snapshot.data;
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(userData.userImage),
-                    radius: 25,
+                trailing: Container(
+                  child: Text(
+                    _requests[index].price + " Kes",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontFamily: 'bradhitc',
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  title: Text(_requests[index].destination),
-                  subtitle: Text(
-                      "Time: " + convertTimeTo12Hour(_requests[index].time)),
-                  trailing: accept == true
-                      ? Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                        )
-                      : Icon(
-                          Icons.info,
-                        ),
-                );
-              }
-            },
-          ),
-        ),
-      ),
+                ),
+                children: <Widget>[
+                  ListTile(
+                      leading: Icon(
+                        Icons.phone,
+                        color: Colors.brown,
+                      ),
+                      title: GestureDetector(child: Text(userData.phoneNum)),
+                      onTap: () => openPhone(userData.phoneNum))
+                ],
+              );
+            }
+          }),
     );
   }
 

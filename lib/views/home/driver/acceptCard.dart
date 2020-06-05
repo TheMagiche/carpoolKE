@@ -7,14 +7,22 @@ import 'package:flutter/material.dart';
 import 'setPrice.dart';
 
 class AcceptCard extends StatefulWidget {
+  // final String offerID;
   final String driverUid;
   final String passengerUid;
   final String departure;
   final String destination;
   final String time;
   final String requestID;
-  AcceptCard(this.driverUid, this.passengerUid, this.departure,
-      this.destination, this.time, this.requestID);
+  AcceptCard(
+    // this.offerID,
+    this.driverUid,
+    this.passengerUid,
+    this.departure,
+    this.destination,
+    this.time,
+    this.requestID,
+  );
   @override
   _AcceptCardState createState() => _AcceptCardState();
 }
@@ -57,13 +65,16 @@ class _AcceptCardState extends State<AcceptCard> {
 
   Future<dynamic> _addPostOfferRequest() async {
     await OfferRideRequestDataBaseServices().addOfferRidesRequest(
-        widget.driverUid,
-        widget.passengerUid,
-        widget.requestID,
-        widget.departure,
-        widget.destination,
-        widget.time,
-        price);
+      // widget.offerID,
+      widget.driverUid,
+      widget.passengerUid,
+      widget.requestID,
+      widget.departure,
+      widget.destination,
+      widget.time,
+      price,
+      false,
+    );
     Timer(Duration(seconds: 3), () {
       Navigator.of(context).pop();
       Navigator.of(context).pop("success");
@@ -138,7 +149,10 @@ class _AcceptCardState extends State<AcceptCard> {
               title: Text(
                 widget.departure,
                 style: TextStyle(
-                    color: Colors.white, fontFamily: 'Oxygen', fontSize: 12.0),
+                  color: Colors.white,
+                  fontFamily: 'Oxygen',
+                  fontSize: 12.0,
+                ),
               ),
             ),
           ),
@@ -152,12 +166,18 @@ class _AcceptCardState extends State<AcceptCard> {
               title: Text(
                 widget.destination,
                 style: TextStyle(
-                    color: Colors.white, fontFamily: 'Oxygen', fontSize: 12.0),
+                  color: Colors.white,
+                  fontFamily: 'Oxygen',
+                  fontSize: 12.0,
+                ),
               ),
               subtitle: Text(
                 "Time : " + convertTimeTo12Hour(widget.time),
                 style: TextStyle(
-                    color: Colors.white, fontFamily: 'Oxygen', fontSize: 12.0),
+                  color: Colors.white,
+                  fontFamily: 'Oxygen',
+                  fontSize: 12.0,
+                ),
               ),
             ),
           ),

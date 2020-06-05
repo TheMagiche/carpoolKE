@@ -4,6 +4,7 @@ class RequestRides {
   final String departure;
   final String destination;
   final String time;
+  final bool isConfirmed;
 
   RequestRides({
     this.uid,
@@ -11,11 +12,13 @@ class RequestRides {
     this.departure,
     this.destination,
     this.time,
+    this.isConfirmed,
   });
   RequestRides.fromMap(Map snapshot)
       : uid = snapshot['uid'],
         requestID = snapshot['requestID'],
         departure = snapshot['departure'],
         destination = snapshot['destination'],
-        time = snapshot['time'];
+        time = snapshot['time'],
+        isConfirmed = snapshot['isConfirmed'];
 }

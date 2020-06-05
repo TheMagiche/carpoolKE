@@ -1,4 +1,5 @@
 class OfferRideRequest {
+  final String offerID;
   final String driverUid;
   final String passengerUid;
   final String requestID;
@@ -6,22 +7,28 @@ class OfferRideRequest {
   final String destination;
   final String time;
   final String price;
+  final bool isConfirmed;
 
-  OfferRideRequest(
-      {this.driverUid,
-      this.passengerUid,
-      this.requestID,
-      this.departure,
-      this.destination,
-      this.time,
-      this.price});
+  OfferRideRequest({
+    this.offerID,
+    this.driverUid,
+    this.passengerUid,
+    this.requestID,
+    this.departure,
+    this.destination,
+    this.time,
+    this.price,
+    this.isConfirmed,
+  });
 
   OfferRideRequest.fromMap(Map snapshot)
-      : driverUid = snapshot['driverUid'],
+      : offerID = snapshot['offerID'],
+        driverUid = snapshot['driverUid'],
         passengerUid = snapshot['passengerUid'],
         requestID = snapshot['requestID'],
         departure = snapshot['departure'],
         destination = snapshot['destination'],
         time = snapshot['time'],
-        price = snapshot['price'];
+        price = snapshot['price'],
+        isConfirmed = snapshot['isConfirmed'];
 }

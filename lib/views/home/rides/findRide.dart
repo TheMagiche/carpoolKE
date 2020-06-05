@@ -10,12 +10,11 @@ class FindRide extends StatefulWidget {
 }
 
 class _FindRideState extends State<FindRide> {
-  // Destination
+  var uuid = Uuid();
+
   String uid = "";
-  String requestID = "";
   String departure = "";
   String destination = "";
-  var uuid = Uuid();
   TimeOfDay pickedTime = TimeOfDay.now();
 
   Future<Null> _selectTime(BuildContext context) async {
@@ -133,7 +132,6 @@ class _FindRideState extends State<FindRide> {
                                     uid: user.uid,
                                     departure: departure,
                                     destination: destination,
-                                    requestID: uuid.v1(),
                                     time: pickedTime,
                                   )).then((snack) =>
                               Scaffold.of(context).showSnackBar(snack));

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carpoolke/models/request_rides.dart';
 import 'package:carpoolke/models/user.dart';
 import 'package:carpoolke/services/Data/database.dart';
@@ -5,6 +6,7 @@ import 'package:carpoolke/views/home/driver/acceptCard.dart';
 import 'package:carpoolke/views/shared/convert_time.dart';
 import 'package:carpoolke/views/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class DriverComponent extends StatefulWidget {
   final String uid;
@@ -15,8 +17,7 @@ class DriverComponent extends StatefulWidget {
 }
 
 class _DriverComponentState extends State<DriverComponent> {
-  bool accept = true;
-
+  var uuid = Uuid();
   // List that contains requests from users
   List<RequestRides> _requests = [];
 
@@ -67,32 +68,37 @@ class _DriverComponentState extends State<DriverComponent> {
       elevation: 2,
       child: GestureDetector(
         onTap: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (context) => AcceptCard(
-                  widget.uid,
-                  _requests[index].uid,
-                  _requests[index].departure,
-                  _requests[index].destination,
-                  _requests[index].time,
-                  _requests[index].requestID)).then((check) {
-            if (check == "success") {
-              //Show Snackbar
-              final snack = SnackBar(
-                backgroundColor: Colors.green,
-                content: Text(
-                  "Notified User!",
-                  style: TextStyle(
-                    color: Colors.white,
+          if (_requests[index].isConfirmed) {
+          } else {
+            showModalBottomSheet(
+                context: context,
+                builder: (context) => AcceptCard(
+                      // uuid.v1(),
+                      widget.uid,
+                      _requests[index].uid,
+                      _requests[index].departure,
+                      _requests[index].destination,
+                      _requests[index].time,
+                      _requests[index].requestID,
+                    )).then((check) {
+              if (check == "success") {
+                //Show Snackbar
+                final snack = SnackBar(
+                  backgroundColor: Colors.brown,
+                  content: Text(
+                    "Added Offer!",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                duration: Duration(seconds: 4),
-              );
-              Scaffold.of(context).showSnackBar(snack);
-            }
-          }).catchError((e) {
-            print(e);
-          });
+                  duration: Duration(seconds: 4),
+                );
+                Scaffold.of(context).showSnackBar(snack);
+              }
+            }).catchError((e) {
+              print(e);
+            });
+          }
         },
         child: Container(
           padding: EdgeInsets.all(5.0),
@@ -105,19 +111,55 @@ class _DriverComponentState extends State<DriverComponent> {
                 UserData userData = snapshot.data;
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(userData.userImage),
+                    backgroundImage:
+                        CachedNetworkImageProvider(userData.userImage),
                     radius: 25,
                   ),
-                  title: Text(_requests[index].destination),
-                  subtitle: Text(
-                      "Time: " + convertTimeTo12Hour(_requests[index].time)),
-                  trailing: accept == true
-                      ? Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
+                  title: Text(
+                    userData.fname + ' ' + userData.lname,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Oxygen',
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _requests[index].destination,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Oxygen',
+                          fontSize: 12.0,
+                        ),
+                      ),
+                      Text(
+                        convertTimeTo12Hour(
+                          _requests[index].time,
+                        ),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Oxygen',
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                  trailing: _requests[index].isConfirmed
+                      ? Text(
+                          'Completed',
+                          style: TextStyle(
+                            fontFamily: 'bradhitc',
+                            fontSize: 12.0,
+                          ),
                         )
-                      : Icon(
-                          Icons.info,
+                      : Text(
+                          'View Ride',
+                          style: TextStyle(
+                            fontFamily: 'bradhitc',
+                            fontSize: 12.0,
+                          ),
                         ),
                 );
               }
